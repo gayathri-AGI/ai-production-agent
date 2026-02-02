@@ -1,0 +1,17 @@
+# AI Agent API - Production Dependencies
+# Tested with Python 3.10+
+
+# Web Framework
+fastapi>=0.100.0
+uvicorn[standard]>=0.23.0
+pydantic>=2.0.0
+
+# LLM
+litellm>=1.0.0
+
+# Production Features
+tenacity>=8.0.0      # Retry logic
+cachetools>=5.0.0    # Response caching
+
+# Optional but recommended
+python-dotenv>=1.0.0  # Local env files
