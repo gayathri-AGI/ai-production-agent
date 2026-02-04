@@ -1,6 +1,7 @@
 """
 RAG Retriever Module
 Agentic Security-Focused RAG
+Compatible with latest LangChain versions
 """
 
 from langchain_community.vectorstores import FAISS
@@ -13,26 +14,28 @@ def retrieve_security_context(query: str) -> str:
     to ground LLM responses and prevent unsafe behavior.
     """
 
-    # Load embeddings model
+    # Load embedding model
     embeddings = HuggingFaceEmbeddings(
         model_name="sentence-transformers/all-MiniLM-L6-v2"
     )
 
-    # Load FAISS vector database (trusted local source)
+    # Load FAISS vector DB (trusted local source)
     db = FAISS.load_local(
         "rag_vector_db",
         embeddings,
         allow_dangerous_deserialization=True
     )
 
-    # Retrieve top relevant chunks
+    # Create retriever
     retriever = db.as_retriever(search_kwargs={"k": 3})
-    docs = retriever.get_relevant_documents(query)
+
+    # 🔹 NEW LangChain API (FIX)
+    docs = retriever.invoke(query)
 
     # Combine retrieved content
     context = "\n".join(doc.page_content for doc in docs)
 
-    # Fallback if no relevant docs found
+    # Fallback safety
     if not context.strip():
         context = (
             "No specific security rules were retrieved. "
